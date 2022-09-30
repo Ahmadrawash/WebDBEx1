@@ -1,0 +1,154 @@
+<html>
+<head>
+<script>
+     function viewAllDepartments()
+     {
+        alert('viewAllDepartments clicked');
+        //let pallelement = document.getElementById("PViewAllDepartments");
+        loadNames();        
+        event.preventDefault();
+     }
+
+    async function loadNames() 
+    {
+        try
+        {
+            alert('loadnames');
+        console.log('loadnames');
+       const response = await fetch('http://localhost:8080/alldept/view', {
+                method: "GET",
+			    headers: {
+				"Content-Type": "application/json"}
+                });
+       const depts = await response.json();
+       if (!depts.ok) {
+        throw new Error('Error! status: ${response.status}');
+       }
+       console.log(depts); 
+       return depts;
+       let pallelement = document.getElementById("PViewAllDepartments");
+       //console.log(depts);
+        pallelement.innerHTML += '<h1>All Elements</h1></br>';
+        pallelement.innerHTML += JSON.parse(depts).text;
+        pallelement.innerHTML += '</br>';
+        pallelement.innerHTML += depts.text;
+    
+        }
+        catch(error)
+        {
+         console.error(error);
+        }
+        }
+
+     function viewOne()
+     {
+         let pelement = document.getElementById("PViewOne");
+         let idelement = document.getElementById("idview");
+         pelement.innerHTML += "<h1>one elements which has id: " + idelement.value +" </h1>";
+         event.preventDefault();
+     }
+     function insertDept()
+     {
+        try
+        {
+            let idelement = document.getElementById("deptno");
+         let nameelement = document.getElementById("deptname");
+         //let quantityelemnet = document.getElementById("quantity");
+         let pinsertelement = document.getElementById("PinsertDept");
+         pinsertelement.innerHTML += "you input element with \nid: " + idelement.value + ", \nname: " + nameelement.value;
+         alert('id: ' + idelement.value + ', name: ' + nameelement.value);
+         AddDepartment(idelement.value ,nameelement.value);
+         event.preventDefault();
+        }
+        catch(error)
+        {
+               alert(error);      
+          }
+       }
+     async function AddDepartment(idstr, namestr) {
+            //let postUrl = "https://ahmadwebproject3.azurewebsites.net/items/insert";
+            let postUrl = "http://localhost:8080/alldept/add";
+
+            //alert('attempting to insert department with id \n' + idstr + ' and \nname: ' + namestr);
+            
+            const param =  {
+                   deptno: idstr,
+                   deptname: namestr
+               };
+
+            alert('param stringified: ' + JSON.stringify(param));
+
+            let response = await fetch(postUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    //'Content-Type': 'application/json;charset=utf-8'
+                    //'Content-Type': 'application/text/plain; charset=UTF-8'
+                },
+                //body: JSON.stringify(postingInstrument)
+                body: JSON.stringify(param)
+                //body: {
+                //    deptno: idstr,
+                //    deptname:"\'" + namestr + "\'"
+               // }
+            })
+
+            try {
+                let result = await response.text();
+
+                alert('result: ' + result);
+                //let json = await response.json();
+
+                if (result) {
+                    alert("department has been added successful");
+                } else {
+                    alert("an error in attempting to isnert the department");
+                }
+            } catch (error) {
+                alert("Error: could not add department");
+            }
+        }
+     
+
+</script>
+</head>
+<body>
+    <form method="post">
+        <table>
+            <tr>
+                <td width="25%">
+                    <button onclick="viewAllDepartments()">ViewAllDeparments</button></br>
+                </td>
+                <td width="25%">
+                    <label>Id</label></br>
+                    <input type="text" id="deptno" /></br>
+                    <label>name</label></br>
+                    <input type="text" id="deptname" /></br>
+                    <button onclick="insertDept()">insertDepartment</button></br>
+                </td>
+                <td width="25%">
+                    <button onclick="viewAllInstructors()">ViewAllInstructors</button></br>
+                </td>
+                <td width="25%">
+                    <lable>Id</lable></br>
+                    <input type="text" id="instidinsert" /></br>
+                    <lable>name</lable></br>
+                    <input type="text" id="instnameinsert" /></br>
+                    <lable>quantity</lable></br>
+                    <input type="text" id="instrsalaryinsert" /></br>
+                    <lable>quantity</lable></br>
+                    <input type="text" id="instrdept_noinsert" /></br>
+                    <button onclick="insertInstructor()">insertInstructor</button></br>
+                </td>
+            </tr>
+            <tr></tr>
+            <tr>
+                <td width="25%"><p id="PViewAllDepartments">all...</p></td>
+                <td width="25%"> <p id="PinsertDept">one...</p></td>
+                <td width="25%"><p id="PviewAllInstrutors">input...</p></td>
+                <td width="25%"><p id="PinsertInstr">input...</p></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

@@ -39,25 +39,34 @@ public class departmentController {
     public List<departmentModel> getAll()
     {
       //  return "success";
-
+        System.out.println("view all departments");
         List<departmentModel> all = deptRepo.findAll();
         return all;
     }
 
+    //using standard static html pages (not async with javascript fetch functions)
+//    @ResponseBody
+//    @ResponseStatus(HttpStatus.OK)
+//    @RequestMapping(value = "/add" , method = RequestMethod.POST)
+//    public String addDepartment(@RequestParam(value = "deptno" , defaultValue = "defaultdeptno") String deptno,
+//                                @RequestParam(value = "deptname" , defaultValue = "defaultdeptname") String deptname)
+    //using JSON parameter sent to the end point
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/add" , method = RequestMethod.POST)
-    public String addDepartment(@RequestParam(value = "deptno" , defaultValue = "defaultdeptno") String deptno,
-                                @RequestParam(value = "deptname" , defaultValue = "defaultdeptname") String deptname)
+    public String addDepartment(@RequestBody departmentModel m)
     {
         try
         {
+            System.out.println("BACKEND: attemtping to add department: \n" + m);
+            //System.out.println("department: " + m);
             //departmentModel m = new departmentModel(9, deptname);
-            departmentModel m = new departmentModel( Integer.parseInt(deptno), deptname);
+            //departmentModel m = new departmentModel( Integer.parseInt(deptno), deptname);
+            //System.out.println("Department information is: " + m);
 
             List<departmentModel> li = deptRepo.findAll();
             for (departmentModel dm: li) {
-                if (dm.getDept_name().equals(deptname))
+                if (dm.getDept_name().equals(m.getDept_name()))
                     return "FAILED: department " + dm + " already exists";
             }
             deptRepo.save(m);
